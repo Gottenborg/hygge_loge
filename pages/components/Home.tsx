@@ -40,7 +40,7 @@ export default function Home({
 
   return (
     <div className="container">
-      {image.url ?
+      {image?
         <img src={image.url} alt={image.alt} className="logo" />
       :
         null
@@ -59,7 +59,7 @@ export default function Home({
           null
         }
 
-        {coordinates.lat ?
+        {coordinates ?
           <p className="description">
             {coordinates.lat},   
             {coordinates.lng}
