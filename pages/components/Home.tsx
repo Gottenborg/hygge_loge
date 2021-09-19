@@ -1,62 +1,86 @@
-import Head from 'next/head'
+import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
+import { useState } from 'react'
 
-export default function Home() {
+type HomeType = {
+  title : string
+  task : string 
+  coordinates: {
+    lat: number
+    lng: number
+  }
+  image: {
+    url: string,
+    alt: string
+  },
+  placeholder : string,
+  validateAnswer: (value:string) => boolean
+  nextState?: (value:any) => void
+}
+
+export default function Home({ 
+  title,
+  task ,
+  coordinates,
+  image,
+  placeholder,
+  validateAnswer,
+  nextState
+}:HomeType) {
+  const [value, setValue] = useState('')
+  const validate = ( ) => {
+    return validateAnswer(value)
+  }
+
+  const submit = () => {
+    console.log("value", value)
+    if (validateAnswer(value)) {
+      nextState(value)
+    }
+  }
+
   return (
     <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      {image.url ?
+        <img src={image.url} alt={image.alt} className="logo" />
+      :
+        null
+      }
 
       <main>
         <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          {title}
         </h1>
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+        {task ?
+          <p className="description">
+            {task}          
+          </p>
+        :
+          null
+        }
 
+        {coordinates.lat ?
+          <p className="description">
+            {coordinates.lat},   
+            {coordinates.lng}
+          </p>
+        :
+          null
+        }
+        
         <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+            <label htmlFor=""></label>
+            { placeholder ? 
+              <input type="text" placeholder={placeholder} value={value} onChange={(e) => {setValue(e.target.value)}}/>
+            : 
+              null
+            }
+            <button type="button" onClick={()=> submit()} className="button">bekraeft</button>
         </div>
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel" className="logo" />
-        </a>
+      <footer>        
+          Powered by{' Jensen Jensen og Jensen '}
       </footer>
 
       <style jsx>{`
@@ -102,6 +126,15 @@ export default function Home() {
           text-decoration: none;
         }
 
+        input[type=text] {
+          border: none;
+          background-color: #f4f4f4;
+          border: 2px solid #ccc;
+          width: 80%;
+          padding: 1em 1em;
+          margin-bottom: 2em;
+        }
+
         .title a {
           color: #0070f3;
           text-decoration: none;
@@ -129,6 +162,17 @@ export default function Home() {
           font-size: 1.5rem;
         }
 
+        .button {
+          background-color: #4CAF50; /* Green */
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+        }
+
         code {
           background: #fafafa;
           border-radius: 5px;
@@ -146,6 +190,8 @@ export default function Home() {
 
           max-width: 800px;
           margin-top: 3rem;
+          width: 100%;
+          flex-direction: column;
         }
 
         .card {
@@ -182,12 +228,6 @@ export default function Home() {
           height: 1em;
         }
 
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
       `}</style>
 
       <style jsx global>{`
